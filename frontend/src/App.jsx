@@ -253,11 +253,50 @@ function App() {
               <div className="tab-content">
                 {activeTab === 'geo' && <GeoMap scheme={selectedScheme} />}
                 {activeTab === 'ai' && (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '2rem' }}>
-                    <Charts scheme={selectedScheme} />
+                  <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '2rem' }}>
+                    <div className="card" style={{ padding: '2rem', background: '#ffffff', border: '1px solid #cbd5e1', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '2px solid var(--accent)', paddingBottom: '0.8rem' }}>
+                        <Brain size={24} color="var(--accent)" />
+                        <h3 style={{ color: 'var(--accent)', margin: 0, fontFamily: 'Outfit', fontWeight: 800 }}>🔬 AI Policy Diagnostics</h3>
+                      </div>
+                      <div style={{ padding: '0.5rem 0' }}>
+                        <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '1.2rem', fontWeight: 600 }}>
+                          Real-time performance audit for <strong>{selectedState}</strong> under the <strong>{selectedScheme}</strong> program:
+                        </p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                          {(data?.ai_brief || '').split('\n').filter(line => line.trim().length > 0).map((line, i) => {
+                            let cleanLine = line.replace(/\*\*/g, '');
+                            let emoji = '';
+                            if (cleanLine.includes('🔴')) { emoji = '🔴'; cleanLine = cleanLine.replace('🔴', ''); }
+                            else if (cleanLine.includes('🟠')) { emoji = '🟠'; cleanLine = cleanLine.replace('🟠', ''); }
+                            else if (cleanLine.includes('🟢')) { emoji = '🟢'; cleanLine = cleanLine.replace('🟢', ''); }
+                            else if (cleanLine.includes('📈')) { emoji = '📈'; cleanLine = cleanLine.replace('📈', ''); }
+                            else if (cleanLine.includes('🎯')) { emoji = '🎯'; cleanLine = cleanLine.replace('🎯', ''); }
+                            else if (cleanLine.includes('🏥')) { emoji = '🏥'; cleanLine = cleanLine.replace('🏥', ''); }
+                            else if (cleanLine.includes('🏠')) { emoji = '🏠'; cleanLine = cleanLine.replace('🏠', ''); }
+                            else if (cleanLine.includes('🌾')) { emoji = '🌾'; cleanLine = cleanLine.replace('🌾', ''); }
+                            else if (cleanLine.includes('💧')) { emoji = '💧'; cleanLine = cleanLine.replace('💧', ''); }
+                            else if (cleanLine.includes('👷')) { emoji = '👷'; cleanLine = cleanLine.replace('👷', ''); }
+                            
+                            let borderCol = '#e2e8f0';
+                            if (emoji === '🔴' || cleanLine.toLowerCase().includes('critical') || cleanLine.toLowerCase().includes('bottleneck')) borderCol = '#ef4444';
+                            else if (emoji === '🟠' || cleanLine.toLowerCase().includes('opportunity') || cleanLine.toLowerCase().includes('moderate')) borderCol = '#f59e0b';
+                            else if (emoji === '🟢' || cleanLine.toLowerCase().includes('high efficiency') || cleanLine.toLowerCase().includes('excellent')) borderCol = '#10b981';
+                            
+                            return (
+                              <div key={i} className="glass" style={{ padding: '1rem', borderLeft: `4px solid ${borderCol}`, borderRadius: '6px', background: 'rgba(255,255,255,0.4)', display: 'flex', gap: '0.8rem', alignItems: 'flex-start' }}>
+                                {emoji && <span style={{ fontSize: '1.2rem', lineHeight: '1.2' }}>{emoji}</span>}
+                                <span style={{ color: '#1e293b', fontSize: '0.9rem', lineHeight: 1.5, fontWeight: 500 }}>{cleanLine.trim()}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                    <Charts scheme={selectedScheme} mode="ai" />
                   </div>
                 )}
-                {activeTab === 'charts' && <Charts scheme={selectedScheme} />}
+                {activeTab === 'charts' && <Charts scheme={selectedScheme} mode="cross" />}
                 {activeTab === 'predictive' && <Predictive scheme={selectedScheme} state={selectedState} />}
                 {activeTab === 'audit' && <ForensicAudit scheme={selectedScheme} />}
               </div>
